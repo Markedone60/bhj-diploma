@@ -1,39 +1,41 @@
-/**
- * Основная функция для совершения запросов
- * на сервер.
- * */
 const createRequest = (options = {}) => {
-  const xhr = new XMLHttpRequest();
-  const formData = new FormData;
-  let url = options.url;
 
-  if (!options.data) {
-    return;
-  };
+  let formData = new FormData();
+  let xhr = new XMLHttpRequest();
+  xhr.responseType = 'json';
 
-  if (options.method == 'GET' && Object.keys(options.data).length != 0) {
-    url = `${options.url}?${getUrl(options.data)}`;
+  if (options.method.toUpperCase() != 'GET') {
+    for (let item in options.data) {
+      formData.append(item, options.data[item]);
+    }
   } else {
-    Object.entries(options.data).forEach(([key, value]) => formData.append(key, value));
-  }
+    let parameters = '';
+    let array = [];
 
-  xhr.addEventListener('readystatechange', function () {
-    if (xhr.readyState == xhr.DONE) {
-      const response = xhr.responseText;
-      options.callback(JSON.parse(response));
-    };
-  });
+    for (let item in options.data) {
+      array.push(item + '=' + options.data[item]);
+    }
+    parameters = array.join('&');
+    options.url = options.url + '?' + parameters;
+  }
 
   try {
-    xhr.open(options.method, url);
+    xhr.open(options.method, options.url);
     xhr.send(formData);
-  } catch (error) {
-    options.callback(error);
+  }
+  catch (event) {
+    options.callback(event);
   }
 
-  return xhr;
+  xhr.onload = function () {
+    let response = null;
+    let error = null;
+    
+    if (xhr.status != 200) {
+      error = xhr.statusText;
+    } else {
+      response = xhr.response;
+    }
+    options.callback(error, response);
+  }
 };
-
-function getUrl(item) {
-  return Object.entries(item).map(([key, value]) => `${key}=${value}`).join('&');
-}

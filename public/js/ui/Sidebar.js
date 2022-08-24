@@ -11,28 +11,17 @@ class Sidebar {
     this.initAuthLinks();
     this.initToggleButton();
   }
-
   /**
    * Отвечает за скрытие/показа боковой колонки:
    * переключает два класса для body: sidebar-open и sidebar-collapse
    * при нажатии на кнопку .sidebar-toggle
    * */
   static initToggleButton() {
-    const sidebar = document.querySelector('.sidebar-mini');
-    const button = document.querySelector('.sidebar-toggle');
-    
-    button.addEventListener('click', (event) => {
-      
-      event.preventDefault();
-
-      if (sidebar.classList.contains('sidebar-open')) {
-        sidebar.classList.remove('sidebar-open');
-        sidebar.classList.add('sidebar-collapse');
-      } else sidebar.classList.add('sidebar-open');
-    })
-    
+    document.querySelector('.sidebar-toggle').onclick = function () {
+      document.querySelector('body').classList.toggle('sidebar-open');
+      document.querySelector('body').classList.toggle('sidebar-collapse');
+    };
   }
-
   /**
    * При нажатии на кнопку входа, показывает окно входа
    * (через найденное в App.getModal)
@@ -41,28 +30,23 @@ class Sidebar {
    * выходу устанавливает App.setState( 'init' )
    * */
   static initAuthLinks() {
-    const loginBtn = document.querySelector('.menu-item_login');
-    const registerBtn = document.querySelector('.menu-item_register');
-    const logoutBtn = document.querySelector('.menu-item_logout');
+    document.querySelector('.menu-item_register').onclick = function () {
+      let modal = App.getModal('register');
+      modal.open();
+    };
 
-    loginBtn.addEventListener('click', (event) => {
-      event.preventDefault();
-      App.getModal('login').open();
-    })
+    document.querySelector('.menu-item_login').onclick = function () {
+      let modal = App.getModal('login');
+      modal.open();
+    };
 
-    registerBtn.addEventListener('click', (event) => {
-      event.preventDefault();
-      App.getModal('register').open();
-    })
-
-    logoutBtn.addEventListener('click', (event) => {
-      event.preventDefault();
-      let callback = function (response) {
-        if (response.success == true) {
+    document.querySelector('.menu-item_logout').onclick = function () {
+      let callback = function (error, response) {
+        if (response.success === true) {
           App.setState('init');
         }
       };
       User.logout(callback);
-    })
+    };
   }
 }

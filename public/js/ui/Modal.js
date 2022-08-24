@@ -13,28 +13,26 @@ class Modal {
    * */
   constructor(element) {
     this.element = element;
+    this.registerEvents();
 
     if (!element) {
-      throw new Error ('Ошибка - передан пустой элемент');
+      throw new Error('Ошибка - передан пустой элемент!');
     }
-
-    this.registerEvents();
   }
 
   /**
    * При нажатии на элемент с data-dismiss="modal"
-   * должен закрыть текущее окно  
+   * должен закрыть текущее окно
    * (с помощью метода Modal.onClose)
    * */
   registerEvents() {
-    const toBeClosed = this.element.querySelectorAll('[data-dismiss="modal"]');
-
-    toBeClosed.forEach ((item) => {
-      item.addEventListener ('click', (event) => {
-        event.preventDefault();
+    let modals = this.element.querySelectorAll("[data-dismiss='modal']");
+    
+    for (let item of modals) {
+      item.onclick = () => {
         this.onClose();
-      })
-    })
+      }
+    }
   }
 
   /**
@@ -43,20 +41,7 @@ class Modal {
    * */
   onClose(e) {
     this.close();
-    this.unregisterEvents();
   }
-
-  unregisterEvents() {
-    const toBeClosed = this.element.querySelectorAll('[data-dismiss="modal"]');
-
-    toBeClosed.forEach ((item) => {
-      item.removeEventListener ('click', (event) => {
-        event.preventDefault();
-        this.onClose();
-      })
-    })
-  }
-  
   /**
    * Открывает окно: устанавливает CSS-свойство display
    * со значением «block»

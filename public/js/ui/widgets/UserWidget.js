@@ -15,7 +15,7 @@ class UserWidget {
     this.element = element;
 
     if (!element) {
-      throw new Error('Ошибка - передан пустой элемент');
+      throw new Error('Ошибка - передан пустой элемент!');
     }
   }
 
@@ -28,12 +28,9 @@ class UserWidget {
    * */
   update() {
     let user = User.current();
-    let userName = document.querySelector('.user-name');
-
-    if (!user) {
-      return;
+    
+    if (user.name) {
+      document.querySelector('.user-name').textContent = user.name;
     }
-
-    userName.textContent = user.name;
   }
 }
